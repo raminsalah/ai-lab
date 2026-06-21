@@ -29,6 +29,44 @@ class Value:
         out._backward = _backward
         return out
 
+    def __neg__(self):
+        return self * Value(-1.0)
+
+    def __sub__(self, other):
+        return self + (-other)
+
+    def __pow__(self, other):
+        out = Value(self.data ** other, (self,), f"**{other}")
+
+        def _backward():
+            self.grad += other * (self.data ** (other - 1)) * out.grad
+
+        out._backward = _backward
+        return out
+
+    def __truediv__(self, other):
+        return self * (other ** -1)
+
+    def tanh(self):
+        x = self.data
+        t = math.tanh(x)
+        out = Value(t, (self,), "tanh")
+
+        def _backward():
+            self.grad += (1 - t**2) * out.grad
+
+        out._backward = _backward
+        return out
+
+    def relu(self):
+        out = Value(0 if self.data < 0 else self.data, (self,), "ReLU")
+
+        def _backward():
+            self.grad += (out.data > 0) * out.grad
+
+        out._backward = _backward
+        return out
+
     def backward(self):
         topo = []
         visited = set()
