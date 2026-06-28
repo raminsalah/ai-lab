@@ -1,3 +1,5 @@
+import math
+
 class Value:
     def __init__(self, data, _children=(), _op=""):
         self.data = data
@@ -10,16 +12,18 @@ class Value:
         return f"Value(data={self.data}, grad={self.grad})"
 
     def __add__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
         out = Value(self.data + other.data, (self, other), "+")
 
         def _backward():
-            self.grad += 1.0 * out.grad
-            other.grad += 1.0 * out.grad
+            self.grad += out.grad
+            other.grad += out.grad
 
         out._backward = _backward
         return out
 
     def __mul__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
         out = Value(self.data * other.data, (self, other), "*")
 
         def _backward():
@@ -28,12 +32,6 @@ class Value:
 
         out._backward = _backward
         return out
-
-    def __neg__(self):
-        return self * Value(-1.0)
-
-    def __sub__(self, other):
-        return self + (-other)
 
     def __pow__(self, other):
         out = Value(self.data ** other, (self,), f"**{other}")
@@ -44,12 +42,29 @@ class Value:
         out._backward = _backward
         return out
 
+    def __neg__(self):
+        return self * -1
+
+    def __sub__(self, other):
+        return self + (-other)
+
+    def __rsub__(self, other):
+        return other + (-self)
+
     def __truediv__(self, other):
         return self * (other ** -1)
 
+    def __rtruediv__(self, other):
+        return other * (self ** -1)
+
+    def __radd__(self, other):
+        return self + other
+
+    def __rmul__(self, other):
+        return self * other
+
     def tanh(self):
-        x = self.data
-        t = math.tanh(x)
+        t = math.tanh(self.data)
         out = Value(t, (self,), "tanh")
 
         def _backward():
