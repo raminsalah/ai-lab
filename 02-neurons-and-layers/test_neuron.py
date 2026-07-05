@@ -1,14 +1,17 @@
 from neuron import Neuron
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parents[1] / "01-autograd-engine"))
+
+from value import Value
 
 n = Neuron(3)
 
-print("Weights:")
+x = [Value(2.0), Value(3.0), Value(-1.0)]
 
-for w in n.w:
-    print(w)
+out = n(x)
 
-print()
-
-print("Bias:")
-
-print(n.b)
+print("output =", out)
+print("weights =", n.w)
+print("bias =", n.b)
