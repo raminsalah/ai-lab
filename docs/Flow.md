@@ -111,7 +111,7 @@ This is called the **weighted sum**.
 
 ---
 
-# Step 4 — Activation Function
+# Step 4 — Activation Function (ReLu-GELU)
 
 Suppose we use ReLU.
 
