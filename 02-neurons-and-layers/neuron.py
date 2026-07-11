@@ -16,3 +16,7 @@ class Neuron:
         act = sum((wi * xi for wi, xi in zip(self.w, x)), self.b)
         out = act.relu()
         return out
+        
+class Layer:
+    def __init__(self, nin, nout):
+        self.neurons = [Neuron(nin) for _ in range(nout)]
