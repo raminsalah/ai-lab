@@ -9,6 +9,25 @@ from value import Value
 from mlp import MLP
 
 
+def print_parameter_breakdown(model: MLP) -> None:
+    print("\nParameter breakdown:")
+
+    total_from_layers = 0
+
+    for index, layer in enumerate(model.layers, start=1):
+        layer_parameter_count = len(layer.parameters())
+        total_from_layers += layer_parameter_count
+
+        print(
+            f"Layer {index}: "
+            f"{layer.nin} → {layer.nout}, "
+            f"parameters={layer_parameter_count}"
+        )
+
+    print("Total from layers:", total_from_layers)
+    print("Total from model :", model.count_parameters())
+
+
 def main() -> None:
     model = MLP(
         nin=3,
@@ -25,21 +44,18 @@ def main() -> None:
 
     outputs = model(x)
 
-    print("Input:")
-    for index, value in enumerate(x, start=1):
-        print(f"x{index}: {value}")
+    print("Model architecture:")
+    print("Input size:", model.nin)
+    print("Hidden sizes:", model.hidden_sizes)
+    print("Output size:", model.nout)
 
-    print("\nModel structure:")
-    for index, layer in enumerate(model.layers, start=1):
-        print(f"Layer {index}: {layer}")
+    print("\nFinal output:")
+    print(outputs[0])
 
-    print("\nFinal outputs:")
-    for index, output in enumerate(outputs, start=1):
-        print(f"Output {index}: {output}")
+    print_parameter_breakdown(model)
 
-    print("\nNumber of outputs:", len(outputs))
-
-    assert len(outputs) == 1
+    assert model.count_parameters() == 41
+    assert model.count_parameters() == len(model.parameters())
 
 
 if __name__ == "__main__":

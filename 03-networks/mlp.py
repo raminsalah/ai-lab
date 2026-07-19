@@ -87,6 +87,10 @@ class MLP(Module):
             for parameter in layer.parameters()
         ]
 
+    def count_parameters(self) -> int:
+        """Return the total number of trainable scalar parameters."""
+        return len(self.parameters())
+
     def train(self):
         """Switch the MLP and all child layers to training mode."""
         super().train()
