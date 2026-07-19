@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from typing import List
+from typing import Iterable, List
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -64,6 +64,20 @@ class MLP(Module):
             )
 
             self.layers.append(layer)
+
+    def __call__(self, x: Iterable[Value]) -> List[Value]:
+        """Pass an input vector through every layer in sequence."""
+        outputs = list(x)
+
+        if len(outputs) != self.nin:
+            raise ValueError(
+                f"Expected {self.nin} inputs, got {len(outputs)}"
+            )
+
+        for layer in self.layers:
+            outputs = layer(outputs)
+
+        return outputs
 
     def parameters(self) -> List[Value]:
         """Return all trainable parameters from all layers."""
