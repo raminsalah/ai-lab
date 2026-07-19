@@ -8,6 +8,7 @@ def print_model_structure(name: str, model: MLP) -> None:
     print("Input size:", model.nin)
     print("Hidden sizes:", model.hidden_sizes)
     print("Output size:", model.nout)
+    print("Hidden activation:", model.hidden_activation)
     print("Number of layers:", len(model.layers))
 
     for index, layer in enumerate(model.layers, start=1):
@@ -17,16 +18,18 @@ def print_model_structure(name: str, model: MLP) -> None:
 
 
 def main() -> None:
-    small_model = MLP(
+    relu_model = MLP(
         nin=3,
         hidden_sizes=[4, 4],
         nout=1,
+        hidden_activation="relu",
     )
 
-    wider_model = MLP(
-        nin=5,
-        hidden_sizes=[8, 4, 2],
-        nout=3,
+    tanh_model = MLP(
+        nin=2,
+        hidden_sizes=[3, 3],
+        nout=1,
+        hidden_activation="tanh",
     )
 
     direct_model = MLP(
@@ -36,13 +39,13 @@ def main() -> None:
     )
 
     print_model_structure(
-        "Small model: 3 → 4 → 4 → 1",
-        small_model,
+        "ReLU model: 3 → 4 → 4 → 1",
+        relu_model,
     )
 
     print_model_structure(
-        "Wider model: 5 → 8 → 4 → 2 → 3",
-        wider_model,
+        "Tanh model: 2 → 3 → 3 → 1",
+        tanh_model,
     )
 
     print_model_structure(

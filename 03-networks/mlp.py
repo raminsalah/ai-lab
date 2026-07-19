@@ -13,13 +13,14 @@ from neuron import Layer
 
 
 class MLP(Module):
-    """A multi-layer perceptron with a flexible architecture."""
+    """A multi-layer perceptron with configurable hidden activation."""
 
     def __init__(
         self,
         nin: int,
         hidden_sizes: List[int],
         nout: int,
+        hidden_activation: str = "relu",
     ):
         super().__init__()
 
@@ -37,6 +38,7 @@ class MLP(Module):
         self.nin = nin
         self.hidden_sizes = list(hidden_sizes)
         self.nout = nout
+        self.hidden_activation = hidden_activation
 
         layer_sizes = [
             nin,
@@ -44,13 +46,24 @@ class MLP(Module):
             nout,
         ]
 
-        self.layers = [
-            Layer(
+        self.layers = []
+
+        for index in range(len(layer_sizes) - 1):
+            is_output_layer = index == len(layer_sizes) - 2
+
+            activation = (
+                "linear"
+                if is_output_layer
+                else hidden_activation
+            )
+
+            layer = Layer(
                 nin=layer_sizes[index],
                 nout=layer_sizes[index + 1],
+                activation=activation,
             )
-            for index in range(len(layer_sizes) - 1)
-        ]
+
+            self.layers.append(layer)
 
     def parameters(self) -> List[Value]:
         """Return all trainable parameters from all layers."""
@@ -61,7 +74,7 @@ class MLP(Module):
         ]
 
     def train(self):
-        """Switch the MLP and all child modules to training mode."""
+        """Switch the MLP and all child layers to training mode."""
         super().train()
 
         for layer in self.layers:
@@ -70,7 +83,7 @@ class MLP(Module):
         return self
 
     def eval(self):
-        """Switch the MLP and all child modules to evaluation mode."""
+        """Switch the MLP and all child layers to evaluation mode."""
         super().eval()
 
         for layer in self.layers:
